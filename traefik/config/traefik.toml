@@ -1,0 +1,37 @@
+[global]
+  checkNewVersion = false
+  sendAnonymousUsage = false
+
+[log]
+  level = "DEBUG"
+  #format = "json"
+  format = "common"
+
+[api]
+  dashboard = true
+  insecure = false
+
+[ping]
+
+[accessLog]
+  format = "json"
+  filePath = "/var/logs/traefik/access.log"
+  bufferingSize = 100
+
+[providers]
+  [providers.docker]
+    watch = true
+    exposedByDefault = false
+    swarmMode = false
+    useBindPortIP = false
+    network = "traefik"
+  [providers.file]
+    watch = true
+    directory = "/etc/traefik/config"
+    debugLogGeneratedTemplate = true
+
+[entryPoints]
+  [entryPoints.http]
+    address = ":80"
+  [entryPoints.https]
+    address = ":443"

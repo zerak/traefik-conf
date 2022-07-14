@@ -1,0 +1,30 @@
+version: '3.7'
+
+services:
+  nginx-server:
+    image: nginx:1.21.0-alpine
+    restart: unless-stopped
+    networks:
+      - traefik
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.nginx-service.rule=Host(`test.domain.com`)" # test.domain.com
+      - "traefik.http.services.nginx-service.loadbalancer.server.scheme=http"
+      - "traefik.http.services.nginx-service.loadbalancer.server.port=80"
+    volumes:
+      - "/etc/localtime:/etc/localtime:ro"
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/var/log/nginx/:/var/log/nginx/"
+      - "/home/www/test.domain:/home/www/test.domain"
+      - "$PWD/conf/:/etc/nginx/conf.d"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+    healthcheck:
+      test: ["CMD-SHELL", "curl --fail http://127.0.0.1 || exit 1"]
+      interval: 5s
+
+networks:
+  traefik:
+    external: true
